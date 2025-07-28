@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "Knockout Sample";
+}
+
+<h2>People</h2>
+
+<div data-bind="foreach: people">
+    <div>
+        <span data-bind="text: FirstName"></span>
+        <span data-bind="text: LastName"></span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Add New</h3>
+
+<div class="mb-3">
+    <input type="text" data-bind="value: newFirstName" class="form-control mb-2" placeholder="First Name" />
+    <input type="text" data-bind="value: newLastName" class="form-control mb-2" placeholder="Last Name" />
+    <button class="btn btn-dark" data-bind="click: addPerson">Add</button>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/knockout-3.5.1.js"></script>
+    <script>
+
+        function Person(id, firstName, lastName) {
+            this.Id = id;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+        }
+
+        function ViewModel() {
+            var self = this;
+            self.people = ko.observableArray([]);
+            self.newFirstName = ko.observable("");
+            self.newLastName = ko.observable("");
+
+            self.loadPeople = function () {
+                $.getJSON('/Person/GetPeople', function (data) {
+                    self.people(data);
+                });
+            };
+
+            self.addPerson = function () {
+                var person = {
+                    FirstName: self.newFirstName(),
+                    LastName: self.newLastName()
+                };
+
+                $.post('/Person/SavePerson', person, function (response) {
+                    if (response.success) {
+                        self.people.push(person);
+                        self.newFirstName("");
+                        self.newLastName("");
+                    } else {
+                        alert("Error saving person");
+                    }
+                });
+            };
+
+            self.loadPeople();
+        }
+
+        ko.applyBindings(new ViewModel());
+    </script>
+}
