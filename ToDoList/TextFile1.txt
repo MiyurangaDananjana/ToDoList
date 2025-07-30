@@ -1,0 +1,54 @@
+﻿CREATE DATABASE TodoListApp;
+
+GO
+
+USE TodoListApp;
+
+GO
+
+CREATE TABLE Users (
+    UserId INT PRIMARY KEY IDENTITY(1,1),
+    UserName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(150) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE Categories (
+    CategoryId INT PRIMARY KEY IDENTITY(1,1),
+    UserId INT NOT NULL,
+    Name NVARCHAR(100) NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);
+
+CREATE TABLE Tasks (
+    TaskId INT PRIMARY KEY IDENTITY(1,1),
+    UserId INT NOT NULL,
+    Title NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX),
+    DueDate DATE,
+    Priority INT CHECK (Priority BETWEEN 1 AND 5), -- 1: High, 5: Low
+    Status NVARCHAR(20) DEFAULT 'Pending', -- Pending, InProgress, Completed
+    CategoryId INT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL,
+    IsDeleted BIT DEFAULT 0,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    FOREIGN KEY (CategoryId) REFERENCES Categories(CategoryId)
+);
+
+
+
+ALTER TABLE Users
+ADD FirstName NVARCHAR(100) NOT NULL;
+
+ALTER TABLE Users
+ADD LastName NVARCHAR(100) NOT NULL;
+
+
+INSERT INTO Categories (UserId, Name)
+VALUES (1, 'Work'), (1, 'Personal');
+
+select * from Tasks
