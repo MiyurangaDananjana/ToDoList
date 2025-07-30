@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ToDoList.Models;
@@ -34,8 +35,6 @@ namespace ToDoList.Controllers
         [HttpPost]
         public JsonResult SaveTask(TaskViewModel model)
         {
-
-
             if (ModelState.IsValid)
             {
                 var repo = new TaskRepository();
@@ -65,5 +64,42 @@ namespace ToDoList.Controllers
 
             return Json(new { success = false, message = "Invalid data" });
         }
+
+        [HttpPost]
+        public JsonResult DeleteTask(int taskId)
+        {
+            try
+            {
+                var repo = new TaskRepository();
+                var task = repo.GetTaskById(taskId);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found" });
+                }
+
+                task.IsDeleted = true;
+                repo.UpdateTask(task);
+
+                return Json(new { success = true, taskId = task.TaskId }); // use 'task' instead of 'savedTask'
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetTasks()
+        {
+            var repo = new TaskRepository();
+
+            int userId = new AccountRepository().GetUserIdByUsername(Session["Username"].ToString());
+
+            List<TaskViewModel> tasks = repo.GetTasks(userId);
+
+            return Json(tasks, JsonRequestBehavior.AllowGet);
+        }
+
+
     }
 }
