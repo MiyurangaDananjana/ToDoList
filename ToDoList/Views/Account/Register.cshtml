@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Register</h2>
+
+<div>
+    <form>
+
+        <div class="form-group mb-3">
+            <input type="text" class="form-control" id="userNameInput" placeholder="User Name" data-bind="value: userName" required>
+            <div data-bind="visible: isUserNameTaken" style="color: red; font-size: 0.9em;">
+                Username is already taken.
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <input type="text" class="form-control" id="firstNameInput" placeholder="First Name" data-bind="value: firstName" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <input type="text" class="form-control" id="lastNameInput" placeholder="Last Name" data-bind="value: lastName" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <input type="email" class="form-control" id="emailInput" placeholder="Email" data-bind="value: email" required>
+        </div>
+
+        <div class="form-group mb-4">
+            <input type="password" class="form-control" id="passwordInput" placeholder="Password" data-bind="value: password" required>
+        </div>
+
+        <button type="submit" class="btn btn-success" data-bind="click: register">Register</button>
+    </form>
+</div>
+
+
+<p data-bind="text: message" style="color: green;"></p>
+<a href="/Account/Login">Back to Login</a>
+
+@section scripts {
+    <script src="~/Scripts/knockout-3.5.1.js"></script>
+    <script>
+        function RegisterViewModel() {
+            var self = this;
+            self.userName = ko.observable('');
+            self.firstName = ko.observable('');
+            self.lastName = ko.observable('');
+            self.email = ko.observable('');
+            self.password = ko.observable('');
+            self.message = ko.observable('');
+
+            self.isUserNameTaken = ko.observable(false);
+
+            // Subscribe to username changes to check availability
+            self.userName.subscribe(function (newUserName) {
+                if (newUserName && newUserName.length >= 3) {  // optional min length
+                    $.get('/Account/IsUserNameRegistered', { userName: newUserName }, function (data) {
+                        self.isUserNameTaken(data.isRegistered);
+                    });
+                } else {
+                    self.isUserNameTaken(false);
+                }
+            });
+
+            self.register = function () {
+                if (self.isUserNameTaken()) {
+                    self.message("Username is already taken.");
+                    return;
+                }
+
+                $.post('/Account/Register', {
+                    UserName: self.userName(),
+                    FirstName: self.firstName(),
+                    LastName: self.lastName(),
+                    Email: self.email(),
+                    Password: self.password()
+                }, function (result) {
+                    self.message(result.message);
+                });
+            };
+        }
+        ko.applyBindings(new RegisterViewModel());
+    </script>
+}

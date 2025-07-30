@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Login</h2>
+
+<div>
+  
+        <form>
+            <div class="form-group mb-3">
+                <input type="text" class="form-control" id="userNameInput" placeholder="Username" data-bind="value: userName">
+            </div>
+            <div class="form-group mb-4">
+                <input type="password" class="form-control" id="passwordInput" placeholder="Password" data-bind="value: password">
+            </div>
+
+            <button type="submit" class="btn btn-primary" data-bind="click: login">Login</button>
+        </form>
+</div>
+
+
+<p data-bind="text: message" style="color: red;"></p>
+<a href="/Account/Register">Register</a>
+
+@section scripts {
+    <script src="~/Scripts/knockout-3.5.1.js"></script>
+    <script>
+        function LoginViewModel() {
+            var self = this;
+            self.userName = ko.observable('');
+            self.password = ko.observable('');
+            self.message = ko.observable('');
+
+            self.login = function () {
+                $.post('/Account/Login', {
+                    UserName: self.userName(),
+                    Password: self.password()
+                }, function (result) {
+                    if (result.success)
+                        window.location.href = '/Task/Index';
+                    else
+                        self.message(result.message || "Login failed.");
+                });
+            };
+        }
+        ko.applyBindings(new LoginViewModel());
+    </script>
+}

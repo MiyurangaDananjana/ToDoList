@@ -1,0 +1,270 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="TodoListAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Categories">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="CategoryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Tasks">
+          <Key>
+            <PropertyRef Name="TaskId" />
+          </Key>
+          <Property Name="TaskId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="DueDate" Type="date" />
+          <Property Name="Priority" Type="int" />
+          <Property Name="Status" Type="nvarchar" MaxLength="20" />
+          <Property Name="CategoryId" Type="int" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="UpdatedAt" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__Categorie__UserI__3D5E1FD2">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Categories" Type="Self.Categories" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Categories">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Tasks__CategoryI__44FF419A">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="0..1" />
+          <End Role="Tasks" Type="Self.Tasks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="Tasks">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Tasks__UserId__440B1D61">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Tasks" Type="Self.Tasks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Tasks">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TodoListAppModelStoreContainer">
+          <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tasks" EntityType="Self.Tasks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Categorie__UserI__3D5E1FD2" Association="Self.FK__Categorie__UserI__3D5E1FD2">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Categories" EntitySet="Categories" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Tasks__CategoryI__44FF419A" Association="Self.FK__Tasks__CategoryI__44FF419A">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Tasks" EntitySet="Tasks" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Tasks__UserId__440B1D61" Association="Self.FK__Tasks__UserId__440B1D61">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Tasks" EntitySet="Tasks" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TodoListAppModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="CategoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Categorie__UserI__3D5E1FD2" FromRole="Categories" ToRole="Users" />
+          <NavigationProperty Name="Tasks" Relationship="Self.FK__Tasks__CategoryI__44FF419A" FromRole="Categories" ToRole="Tasks" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="TaskId" />
+          </Key>
+          <Property Name="TaskId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DueDate" Type="DateTime" Precision="0" />
+          <Property Name="Priority" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CategoryId" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <NavigationProperty Name="Category" Relationship="Self.FK__Tasks__CategoryI__44FF419A" FromRole="Tasks" ToRole="Categories" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Tasks__UserId__440B1D61" FromRole="Tasks" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="Categories" Relationship="Self.FK__Categorie__UserI__3D5E1FD2" FromRole="Users" ToRole="Categories" />
+          <NavigationProperty Name="Tasks" Relationship="Self.FK__Tasks__UserId__440B1D61" FromRole="Users" ToRole="Tasks" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK__Categorie__UserI__3D5E1FD2">
+          <End Role="Users" Type="Self.User" Multiplicity="1" />
+          <End Role="Categories" Type="Self.Category" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Categories">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Tasks__CategoryI__44FF419A">
+          <End Role="Categories" Type="Self.Category" Multiplicity="0..1" />
+          <End Role="Tasks" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="Tasks">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Tasks__UserId__440B1D61">
+          <End Role="Users" Type="Self.User" Multiplicity="1" />
+          <End Role="Tasks" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Tasks">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TodoListAppEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Categories" EntityType="Self.Category" />
+          <EntitySet Name="Tasks" EntityType="Self.Task" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="FK__Categorie__UserI__3D5E1FD2" Association="Self.FK__Categorie__UserI__3D5E1FD2">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Categories" EntitySet="Categories" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Tasks__CategoryI__44FF419A" Association="Self.FK__Tasks__CategoryI__44FF419A">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Tasks" EntitySet="Tasks" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Tasks__UserId__440B1D61" Association="Self.FK__Tasks__UserId__440B1D61">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Tasks" EntitySet="Tasks" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TodoListAppModelStoreContainer" CdmEntityContainer="TodoListAppEntities">
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="TodoListAppModel.Category">
+              <MappingFragment StoreEntitySet="Categories">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tasks">
+            <EntityTypeMapping TypeName="TodoListAppModel.Task">
+              <MappingFragment StoreEntitySet="Tasks">
+                <ScalarProperty Name="TaskId" ColumnName="TaskId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="Priority" ColumnName="Priority" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="UpdatedAt" ColumnName="UpdatedAt" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="TodoListAppModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
