@@ -58,7 +58,6 @@ namespace ToDoList.Controllers
                     IsDeleted = false
                 };
 
-
                 repo.SaveTask(task);
 
                 return Json(new { success = true });
